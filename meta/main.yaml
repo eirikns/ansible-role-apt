@@ -1,0 +1,24 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: "apt"
+  author: "eirikns"
+  description: |
+    Configure apt on Debian/Ubuntu and upgrade and install packages.
+  license: "MIT No Attribution"
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Debian
+      versions:
+        - trixie
+    - name: Ubuntu
+      versions:
+        - noble
+        - resolute
+  galaxy_tags:
+    - apt
+    - unattendedupgrades
+    - packages
+    - debian
+    - ubuntu

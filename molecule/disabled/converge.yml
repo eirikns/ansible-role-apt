@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  roles:
+    - role: eirikns.apt
+      vars:
+        apt_configure_unattended_upgrades: false
+        apt_configure_periodic: false

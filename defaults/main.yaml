@@ -1,0 +1,63 @@
+---
+
+# Whether to upgrade all installed packages to the latest version during role execution.
+apt_upgrade_packages: false
+
+# Whether to install and configure unattended-upgrades.
+apt_configure_unattended_upgrades: true
+
+# Whether to configure periodic apt tasks via /etc/apt/apt.conf.d/10periodic.
+apt_configure_periodic: true
+
+# Additional packages to install via apt.
+apt_additional_packages: []
+#  - emacs-nox
+#  - screen
+#  - traceroute
+#  - whois
+#  - unzip
+
+# Whether to install recommended dependencies when installing additional packages.
+apt_additional_packages_install_recommends: true
+
+# The unattended-upgrades package to install.
+apt_unattended_upgrades_package: unattended-upgrades
+
+# Whether to automatically reboot after an upgrade if required.
+apt_unattended_upgrades_automatic_reboot: true
+
+# Whether to reboot even if users are logged in.
+apt_unattended_upgrades_automatic_reboot_with_users: true
+
+# Time at which to perform automatic reboots (if enabled).
+apt_unattended_upgrades_automatic_reboot_time: "02:00"
+
+# Whether to remove unused kernel packages after an upgrade.
+apt_unattended_upgrades_remove_unused_kernel_packages: true
+
+# Whether to remove newly unused dependencies after an upgrade.
+apt_unattended_upgrades_remove_new_unused_dependencies: true
+
+# Whether to remove unused packages after an upgrade (equivalent to apt autoremove).
+apt_unattended_upgrades_remove_unused_dependencies: true
+
+# Additional allowed origins beyond the default security origins.
+apt_unattended_upgrades_origins_extra: []
+#  - "${distro_id}:${distro_codename}-updates"
+#  - "${distro_id}:${distro_codename}-backports"
+
+# Packages to exclude from unattended upgrades (Python regex patterns).
+apt_unattended_upgrades_package_blocklist: []
+#  - "linux-"
+
+# How often to update the package list (days; 0 = disabled).
+apt_periodic_update_package_lists: 1
+
+# How often to download upgradeable packages (days; 0 = disabled).
+apt_periodic_download_upgradeable: 0
+
+# How often to clean the local download cache (days; 0 = disabled).
+apt_periodic_clean_interval: 1
+
+# How often to run unattended-upgrades (days; 0 = disabled).
+apt_periodic_unattended_upgrade: 1

@@ -1,0 +1,60 @@
+---
+- name: Validate role variables
+  ansible.builtin.assert:
+    that:
+      - apt_upgrade_packages is boolean
+      - apt_configure_unattended_upgrades is boolean
+      - apt_configure_periodic is boolean
+      - apt_additional_packages is iterable
+      - apt_additional_packages is not string
+      - apt_additional_packages_install_recommends is boolean
+      - apt_unattended_upgrades_package is string
+      - apt_unattended_upgrades_package | length > 0
+      - apt_unattended_upgrades_automatic_reboot is boolean
+      - apt_unattended_upgrades_automatic_reboot_with_users is boolean
+      - apt_unattended_upgrades_remove_unused_kernel_packages is boolean
+      - apt_unattended_upgrades_remove_new_unused_dependencies is boolean
+      - apt_unattended_upgrades_remove_unused_dependencies is boolean
+      - apt_unattended_upgrades_origins_extra is iterable
+      - apt_unattended_upgrades_origins_extra is not string
+      - apt_unattended_upgrades_package_blocklist is iterable
+      - apt_unattended_upgrades_package_blocklist is not string
+      - apt_unattended_upgrades_automatic_reboot_time is match('^([01][0-9]|2[0-3]):[0-5][0-9]$')
+      - apt_periodic_update_package_lists is number
+      - apt_periodic_update_package_lists >= 0
+      - apt_periodic_update_package_lists % 1 == 0
+      - apt_periodic_download_upgradeable is number
+      - apt_periodic_download_upgradeable >= 0
+      - apt_periodic_download_upgradeable % 1 == 0
+      - apt_periodic_clean_interval is number
+      - apt_periodic_clean_interval >= 0
+      - apt_periodic_clean_interval % 1 == 0
+      - apt_periodic_unattended_upgrade is number
+      - apt_periodic_unattended_upgrade >= 0
+      - apt_periodic_unattended_upgrade % 1 == 0
+    quiet: true
+
+- name: Upgrade all packages to the latest version
+  ansible.builtin.apt:
+    upgrade: dist
+    update_cache: true
+    cache_valid_time: 3600
+    autoclean: true
+  when: apt_upgrade_packages is true
+
+- name: Install additional packages via apt
+  ansible.builtin.apt:
+    name: "{{ apt_additional_packages }}"
+    update_cache: true
+    cache_valid_time: 3600
+    autoclean: true
+    install_recommends: "{{ apt_additional_packages_install_recommends }}"
+  when: apt_additional_packages | length > 0
+
+- name: Configure unattended upgrades
+  ansible.builtin.import_tasks: apt_unattended_upgrades.yaml
+  when: apt_configure_unattended_upgrades is true
+
+- name: Configure periodic apt tasks
+  ansible.builtin.import_tasks: apt_periodic.yaml
+  when: apt_configure_periodic is true

@@ -1,0 +1,105 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Check unattended-upgrades package is installed
+      ansible.builtin.command: dpkg-query -W -f='${Status}' unattended-upgrades
+      register: unattended_pkg
+      changed_when: false
+
+    - name: Assert unattended-upgrades is installed
+      ansible.builtin.assert:
+        that:
+          - "'install ok installed' in unattended_pkg.stdout"
+
+    - name: Check unattended-upgrades service is enabled and running
+      ansible.builtin.systemd:
+        name: unattended-upgrades.service
+      register: unattended_service
+
+    - name: Assert unattended-upgrades service is enabled and running
+      ansible.builtin.assert:
+        that:
+          - unattended_service.status.ActiveState == "active"
+          - unattended_service.status.UnitFileState == "enabled"
+
+    - name: Check 50unattended-upgrades config file
+      ansible.builtin.stat:
+        path: /etc/apt/apt.conf.d/50unattended-upgrades
+      register: unattended_conf
+
+    - name: Assert 50unattended-upgrades config file exists with correct permissions
+      ansible.builtin.assert:
+        that:
+          - unattended_conf.stat.exists
+          - unattended_conf.stat.pw_name == "root"
+          - unattended_conf.stat.gr_name == "root"
+          - unattended_conf.stat.mode == "0644"
+
+    - name: Read 50unattended-upgrades content
+      ansible.builtin.slurp:
+        src: /etc/apt/apt.conf.d/50unattended-upgrades
+      register: unattended_conf_content
+
+    - name: Assert key settings are present in 50unattended-upgrades
+      ansible.builtin.assert:
+        that:
+          - >-
+            'Unattended-Upgrade::Remove-Unused-Dependencies "true"'
+            in unattended_conf_content.content | b64decode
+          - >-
+            'Unattended-Upgrade::Automatic-Reboot "true"'
+            in unattended_conf_content.content | b64decode
+          - >-
+            'Unattended-Upgrade::Automatic-Reboot-Time "02:00"'
+            in unattended_conf_content.content | b64decode
+          - >-
+            'Unattended-Upgrade::Package-Block-List'
+            in unattended_conf_content.content | b64decode
+          - >-
+            'Unattended-Upgrade::Package-Blacklist'
+            not in unattended_conf_content.content | b64decode
+
+    - name: Check 10periodic config file
+      ansible.builtin.stat:
+        path: /etc/apt/apt.conf.d/10periodic
+      register: periodic_conf
+
+    - name: Assert 10periodic config file exists with correct permissions
+      ansible.builtin.assert:
+        that:
+          - periodic_conf.stat.exists
+          - periodic_conf.stat.pw_name == "root"
+          - periodic_conf.stat.mode == "0644"
+
+    - name: Read 10periodic content
+      ansible.builtin.slurp:
+        src: /etc/apt/apt.conf.d/10periodic
+      register: periodic_conf_content
+
+    - name: Assert key settings are present in 10periodic
+      ansible.builtin.assert:
+        that:
+          - >-
+            'APT::Periodic::Update-Package-Lists "1"'
+            in periodic_conf_content.content | b64decode
+          - >-
+            'APT::Periodic::Download-Upgradeable-Packages "0"'
+            in periodic_conf_content.content | b64decode
+          - >-
+            'APT::Periodic::CleanInterval "1"'
+            in periodic_conf_content.content | b64decode
+          - >-
+            'APT::Periodic::Unattended-Upgrade "1"'
+            in periodic_conf_content.content | b64decode
+
+    - name: Check curl package is installed
+      ansible.builtin.command: dpkg-query -W -f='${Status}' curl
+      register: curl_pkg
+      changed_when: false
+
+    - name: Assert curl is installed
+      ansible.builtin.assert:
+        that:
+          - "'install ok installed' in curl_pkg.stdout"

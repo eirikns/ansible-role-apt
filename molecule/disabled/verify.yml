@@ -1,0 +1,30 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Check 50unattended-upgrades config file is absent
+      ansible.builtin.stat:
+        path: /etc/apt/apt.conf.d/50unattended-upgrades
+      register: unattended_conf
+
+    - name: Assert 50unattended-upgrades config file does not exist
+      ansible.builtin.assert:
+        that:
+          - not unattended_conf.stat.exists
+        fail_msg: >-
+          /etc/apt/apt.conf.d/50unattended-upgrades should not exist
+          when apt_configure_unattended_upgrades is false
+
+    - name: Check 10periodic config file is absent
+      ansible.builtin.stat:
+        path: /etc/apt/apt.conf.d/10periodic
+      register: periodic_conf
+
+    - name: Assert 10periodic config file does not exist
+      ansible.builtin.assert:
+        that:
+          - not periodic_conf.stat.exists
+        fail_msg: >-
+          /etc/apt/apt.conf.d/10periodic should not exist
+          when apt_configure_periodic is false

@@ -1,0 +1,36 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Read 50unattended-upgrades content
+      ansible.builtin.slurp:
+        src: /etc/apt/apt.conf.d/50unattended-upgrades
+      register: unattended_conf_content
+
+    - name: Assert extra origins are present in 50unattended-upgrades
+      ansible.builtin.assert:
+        that:
+          - >-
+            '${distro_id}:${distro_codename}-updates'
+            in unattended_conf_content.content | b64decode
+          - >-
+            '${distro_id}:${distro_codename}-backports'
+            in unattended_conf_content.content | b64decode
+        fail_msg: Extra origins from apt_unattended_upgrades_origins_extra are missing from 50unattended-upgrades
+
+    - name: Assert package blocklist entry is present in 50unattended-upgrades
+      ansible.builtin.assert:
+        that:
+          - >-
+            '"linux-"'
+            in unattended_conf_content.content | b64decode
+        fail_msg: Blocklist entry "linux-" is missing from 50unattended-upgrades
+
+    - name: Assert automatic reboot is disabled
+      ansible.builtin.assert:
+        that:
+          - >-
+            'Unattended-Upgrade::Automatic-Reboot "false"'
+            in unattended_conf_content.content | b64decode
+        fail_msg: Automatic reboot should be set to false
