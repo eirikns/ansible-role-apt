@@ -3,6 +3,10 @@
 # Whether to upgrade all installed packages to the latest version during role execution.
 apt_upgrade_packages: false
 
+# Whether to reboot after a package upgrade if /var/run/reboot-required exists.
+# Set to false if unattended-upgrades is configured to handle reboots automatically.
+apt_reboot_if_required: true
+
 # Whether to install and configure unattended-upgrades.
 apt_configure_unattended_upgrades: true
 

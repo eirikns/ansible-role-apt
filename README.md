@@ -12,7 +12,7 @@ See [`defaults/main.yaml`](defaults/main.yaml) for the full list of variables an
 apt_upgrade_packages: false
 ```
 
-Whether to upgrade all installed packages to the latest version during role execution.
+Whether to upgrade all installed packages to the latest version during role execution. When enabled, the role checks for `/var/run/reboot-required` after the upgrade and reboots if necessary. Set `apt_reboot_if_required: false` to skip the reboot — useful when `unattended-upgrades` is configured to handle reboots on its own schedule.
 
 ```yaml
 apt_additional_packages:

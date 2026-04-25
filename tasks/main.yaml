@@ -3,6 +3,7 @@
   ansible.builtin.assert:
     that:
       - apt_upgrade_packages is boolean
+      - apt_reboot_if_required is boolean
       - apt_configure_unattended_upgrades is boolean
       - apt_configure_periodic is boolean
       - apt_additional_packages is iterable
@@ -58,3 +59,13 @@
 - name: Configure periodic apt tasks
   ansible.builtin.import_tasks: apt_periodic.yaml
   when: apt_configure_periodic is true
+
+- name: Check if reboot is required after package upgrade
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: apt_reboot_required
+  when: apt_upgrade_packages is true
+
+- name: Reboot if required after package upgrade
+  ansible.builtin.reboot:
+  when: apt_upgrade_packages is true and apt_reboot_if_required is true and apt_reboot_required.stat.exists
