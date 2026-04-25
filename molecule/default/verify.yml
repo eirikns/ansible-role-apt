@@ -60,6 +60,9 @@
           - >-
             'Unattended-Upgrade::Package-Blacklist'
             not in unattended_conf_content.content | b64decode
+          - >-
+            'Unattended-Upgrade::Mail'
+            not in unattended_conf_content.content | b64decode
 
     - name: Check 10periodic config file
       ansible.builtin.stat:

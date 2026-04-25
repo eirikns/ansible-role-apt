@@ -34,3 +34,25 @@
             'Unattended-Upgrade::Automatic-Reboot "false"'
             in unattended_conf_content.content | b64decode
         fail_msg: Automatic reboot should be set to false
+
+    - name: Assert mail settings are present in 50unattended-upgrades
+      ansible.builtin.assert:
+        that:
+          - >-
+            'Unattended-Upgrade::Mail "admin@example.com"'
+            in unattended_conf_content.content | b64decode
+          - >-
+            'Unattended-Upgrade::MailOnlyOnError "true"'
+            in unattended_conf_content.content | b64decode
+        fail_msg: Mail settings are missing from 50unattended-upgrades
+
+    - name: Assert dpkg options are present in 50unattended-upgrades
+      ansible.builtin.assert:
+        that:
+          - >-
+            '"--force-confdef"'
+            in unattended_conf_content.content | b64decode
+          - >-
+            '"--force-confold"'
+            in unattended_conf_content.content | b64decode
+        fail_msg: dpkg options are missing from 50unattended-upgrades

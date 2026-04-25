@@ -15,6 +15,12 @@ apt_upgrade_packages: false
 Whether to upgrade all installed packages to the latest version during role execution. When enabled, the role checks for `/var/run/reboot-required` after the upgrade and reboots if necessary. Set `apt_reboot_if_required: false` to skip the reboot — useful when `unattended-upgrades` is configured to handle reboots on its own schedule.
 
 ```yaml
+apt_autoremove: false
+```
+
+Whether to run `apt autoremove` to remove packages that are no longer needed. Can be used independently of `apt_upgrade_packages`.
+
+```yaml
 apt_additional_packages:
   - curl
   - unzip
@@ -30,6 +36,9 @@ Whether to install and configure `unattended-upgrades`. When enabled, the role i
 
 - `apt_unattended_upgrades_automatic_reboot` — whether to reboot automatically when required (default: `true`)
 - `apt_unattended_upgrades_automatic_reboot_time` — time of day for automatic reboots (default: `"02:00"`)
+- `apt_unattended_upgrades_mail` — email address for upgrade notifications; leave empty to disable (default: `""`)
+- `apt_unattended_upgrades_mail_only_on_error` — only send email on errors, not on every upgrade (default: `false`)
+- `apt_unattended_upgrades_dpkg_options` — dpkg options for handling config file conflicts (e.g. `["--force-confdef", "--force-confold"]`; default: `[]`)
 - `apt_unattended_upgrades_origins_extra` — additional origins beyond the default security origins (default: `[]`)
 - `apt_unattended_upgrades_package_blocklist` — packages to exclude from unattended upgrades (default: `[]`)
 

@@ -7,6 +7,9 @@ apt_upgrade_packages: false
 # Set to false if unattended-upgrades is configured to handle reboots automatically.
 apt_reboot_if_required: true
 
+# Whether to run apt autoremove to remove packages that are no longer needed.
+apt_autoremove: false
+
 # Whether to install and configure unattended-upgrades.
 apt_configure_unattended_upgrades: true
 
@@ -26,6 +29,16 @@ apt_additional_packages_install_recommends: true
 
 # The unattended-upgrades package to install.
 apt_unattended_upgrades_package: unattended-upgrades
+
+# Email address to send unattended-upgrades notifications to. Leave empty to disable.
+apt_unattended_upgrades_mail: ""
+
+# When true, only send email if an upgrade error occurs. Has no effect if apt_unattended_upgrades_mail is empty.
+apt_unattended_upgrades_mail_only_on_error: false
+
+# dpkg options passed to unattended-upgrades for handling config file conflicts during upgrades.
+# Example: ["--force-confdef", "--force-confold"]
+apt_unattended_upgrades_dpkg_options: []
 
 # Whether to automatically reboot after an upgrade if required.
 apt_unattended_upgrades_automatic_reboot: true

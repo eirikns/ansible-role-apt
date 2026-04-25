@@ -8,5 +8,6 @@
       vars:
         apt_additional_packages:
           - curl
+        apt_autoremove: true
         apt_configure_unattended_upgrades: true
         apt_configure_periodic: true
